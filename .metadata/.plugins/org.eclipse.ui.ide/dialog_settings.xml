@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<list key="org.eclipse.ui.internal.wizards.datatransfer.SmartImportRootWizardPage.knownSources">
+		<item value="D:\Workspace\EGov\Java\Servers"/>
+		<item value="D:\Workspace\EGov\Java\jspbook"/>
+		<item value="D:\Workspace\EGov\Java\javabook"/>
+		<item value="D:\Workspace\EGov\Java\book01"/>
+		<item value="D:\Workspace\EGov\JSP\basic01"/>
+	</list>
+</section>
