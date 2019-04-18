@@ -30,28 +30,44 @@
 <body>
 <%
 	//request.setCharacterEncoding("UTF-8");
+
+	//LoginProc에 parameter값을 요청, 참조변수에 저장.
 	String error = request.getParameter("error");
-	System.out.println(error);
+	//String error = (String)request.getAttribute("error"); //LoginProc.java에서 setAttribute로 보낸것을 수신
 	if(error!=null) {
+		System.out.println(error);
 		out.println("<script>alert('"+error+"')</script>");
 	}
 %>
-	<center><br>
+	<center>
+	<br>
 	<h3>Member Login</h3>
 	<hr>
-	<form name="loginForm" action=/jspbook/member/loginProc.jsp method=post>
+	
+	<!-- jsp방식의 컨트롤러 이용 시
+	<form name="loginForm" action=/jspbook/member/loginProc.jsp method=post> -->
+	
+	<!-- servlet방식의 컨트롤러 이용 시
+		 :소스 경로이므로, 확장자 없이 servlet파일에 기술된 경로를 삽입 
+		 (LoginProc.java파일의 상단참조) 
+		 action을 요청할 컨트롤러 경로, 방식(doPost로 정의된 메소드) 지정.-->
+	<form name="loginForm" action=/jspbook/member/loginProcServlet method=post>
 		<label><span>ID:</span>
 			<input type="text" name="id" size="10">
-		</label><br>
+		</label>
 		<label><span>Password:</span>
 			<input type="password" name="password" size="10">
-		</label><br>
+		</label>
 		<label>
 			<span></span>
+			<!-- submit버튼 : 입력된 값을 form에 정의된 컨트롤러에 전달. 'doPost()' -->
 			<input type="submit" value="로그인" name="B1">&nbsp;&nbsp;
 	 		<input type="reset" value="재작성" name="B2">
-<!--작동 됨: <button><a href="/jspbook/member/register.html">회원가입</a></button> -->
+	 		
+		<!-- label내부의 링크 버튼 
+		<button><a href="/jspbook/member/register.html">회원가입</a></button> -->
 		</label>
+			<!-- 버튼 : 하이퍼 링크로 연결-->
 			<br><br><button onclick="location.href='register.html'">회원 가입</button>
 	</form>
 	</center>

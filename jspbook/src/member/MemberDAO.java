@@ -13,22 +13,27 @@ public class MemberDAO {
 	public static final int ID_PASSWORD_MATCH = 1;
 	public static final int ID_DOES_NOT_EXIST = 2;
 	public static final int PASSWORD_IS_WRONG = 3;
-	public static final int DATABASE_ERROR = -1;  //값 주의.
+	public static final int DATABASE_ERROR = -1;	//값 주의.
 	
-	private Connection conn;
+	private Connection conn;						//[1]Connection 인터페이스의 참조변수
 	private static final String USERNAME = "javauser";
 	private static final String PASSWORD = "javapass";
+	//[2]mysql의 world DB에 접속하는 경로?
 	private static final String URL = "jdbc:mysql://localhost:3306/world?verifyServerCertificate=false&useSSL=false";
 	
 	
-	//[1]동적로딩 
+	//[3]동적로딩 
 	//: 불특정 클래스 로딩을 위해 Class클래스의 forName함수를 이용하여
 	//	해당 클래스를 메모리로 로드 (어떤 객체를 생성해서 처리를 해야될지 모르는 경우)
+	
+	//[4]DB연결
+	//java.sql.DriverManager The basic service for managing a set of JDBC drivers.
+	//The use of a DataSource object is the preferred means of connecting to a data source.
 	public MemberDAO() {
 		try {
-			Class.forName("com.mysql.jdbc.Driver");	//[1]동적로딩
-			conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-		} catch (Exception ex) {
+			Class.forName("com.mysql.jdbc.Driver"); //[3]동적로딩
+			conn = DriverManager.getConnection(URL, USERNAME, PASSWORD); //[4]DB연결
+		} catch (Exception ex) { //ClassNotFoundException, SQLException
 			ex.printStackTrace();
 		}
 	}
@@ -36,19 +41,22 @@ public class MemberDAO {
 	//04.17 추가. loginProc.jsp에서 호출, password확인
 	public int verifyIdPassword(int id, String password) {
 		System.out.println("verifyIdPassword(): " +id + ", " +password);
-		String query = "select password from member where id=?";
+		String query = "select hashed from member where id=?"; //[5]DB에서 검색하는 쿼리문
 		
 		PreparedStatement pStmt = null;
 		ResultSet rs =null;
-		String dbPassword ="";
+//		String dbPassword ="";
+		String hashedPassword ="";
 	
 		try {
 			pStmt = conn.prepareStatement(query);
 			pStmt.setInt(1, id);
 			rs= pStmt.executeQuery();
 			while(rs.next()) {
-				dbPassword = rs.getString(1);
-				if(dbPassword.equals(password))
+//				dbPassword = rs.getString(1);
+//				if(dbPassword.equals(password))
+				hashedPassword = rs.getString(1);
+				if(BCrypt.checkpw(password, hashedPassword)) //??????
 					return ID_PASSWORD_MATCH;
 				else
 					return PASSWORD_IS_WRONG;
@@ -68,18 +76,21 @@ public class MemberDAO {
 		return DATABASE_ERROR;
 	}
 	
+	
 	//Insert
 	public void insertMember(MemberDTO member) {
 		//sql구문 : 모든 column에 입력하지 않을 시, 입력할 column을 명시하여야 한다.
-		String query = "insert into member(password, name, birthday, address) values(?,?,?,?);";
+		String query = "insert into member(password, name, birthday, address, hashed) values(?,?,?,?,?);";
 		PreparedStatement pStmt = null;
 		
 		try {
+			String hashedPassword = BCrypt.hashpw(member.getPassword(), BCrypt.gensalt());
 			pStmt = conn.prepareStatement(query);
-			pStmt.setString(1, member.getPassword());
+			pStmt.setString(1, "*");
 			pStmt.setString(2, member.getName());
 			pStmt.setString(3, member.getBirthday());
 			pStmt.setString(4, member.getAddress());
+			pStmt.setString(5, hashedPassword); //member객체에 없음
 			
 			pStmt.executeUpdate();
 		} catch (Exception e) {
@@ -152,35 +163,7 @@ public class MemberDAO {
 			e.printStackTrace();
 		}
 	}
-	
-	//Create Table
-	public void createTable() { //col항목을 받아 생성하는 메소드로 수정할 것.
-		String query = "create table if not exists member (" + 
-						"id int(6) unsigned not null auto_increment," + 
-						"password varchar(10) not null," + 
-						"name varchar(10) not null," + 
-						"birthday date not null default 0," + 
-						"address varchar(50)," + 
-						"primary key(id)" + 
-						") auto_increment=10001 default charset=utf8;";
-		
-		PreparedStatement pStmt = null;
-		
-		try {
-			pStmt = conn.prepareStatement(query);
-			pStmt.execute();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if(pStmt != null && !pStmt.isClosed())
-					pStmt.close();
-			} catch (SQLException se) {
-				se.printStackTrace();
-			}
-		}
-	}
-		
+
 	
 	//select * from member where id
 	public MemberDTO selectMemberById(int id) {
@@ -205,8 +188,8 @@ public class MemberDAO {
 	}
 
 	
-//---[Selection]---------------------------------------------------------	
-	//쿼리문에 따라 한종류만 선택
+//Selection(2EA)-------------------------------------------------------------------------
+	//(1)쿼리문에 따라 한종류만 선택
 	public MemberDTO selectOne(String query) {
 		MemberDTO member = new MemberDTO();
     	PreparedStatement pStmt = null;
@@ -235,7 +218,7 @@ public class MemberDAO {
     	return member;
     }
 			
-	//쿼리문에 따른 리스트 반환
+	//(2)쿼리문에 따른 리스트 반환
 	public List<MemberDTO> selectCondition(String query) { //selectAll변경
 		PreparedStatement pStmt = null;
 		List<MemberDTO> memberList = new ArrayList<MemberDTO>();
@@ -265,4 +248,72 @@ public class MemberDAO {
 		}
 		return memberList;
 	}
+//end selection-------------------------------------------------------------------------------
+	
+
+//password 암호화(BCrypt, 2EA)-----------------------------------------------------------------------
+	//(1) 암호화
+	public void initPassword() {
+		List<MemberDTO> mList = selectAll(); //리스트를 전부 가져옴
+		for(MemberDTO member: mList) {
+			int id = member.getId();
+			String plainPassword = member.getPassword();
+			String hashedPassword = BCrypt.hashpw(plainPassword, BCrypt.gensalt());
+			updatePassword(id, hashedPassword);
+		}
+	}
+	
+	//(2)DB에 update
+	public void updatePassword(int id, String hashed) {
+		String query = "update member set hashed=? where id=?;";
+		PreparedStatement pStmt = null;
+		
+		try {
+			pStmt = conn.prepareStatement(query);
+			pStmt.setString(1, hashed);
+			pStmt.setInt(2, id);
+			
+			pStmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(pStmt != null && !pStmt.isClosed())
+					pStmt.close();
+			} catch (SQLException se) {
+				se.printStackTrace();
+			}
+		}
+	}
+//end password암호화---------------------------------------------------------------------
+
+
+//Create Table(1EA)---------------------------------------------------------------------------
+	public void createTable() { //col항목을 받아 생성하는 메소드로 수정할 것.
+		String query = "create table if not exists member (" + 
+						"id int(6) unsigned not null auto_increment," + 
+						"password varchar(10) not null," + 
+						"name varchar(10) not null," + 
+						"birthday date not null default 0," + 
+						"address varchar(50)," + 
+						"primary key(id)" + 
+						") auto_increment=10001 default charset=utf8;";
+		
+		PreparedStatement pStmt = null;
+		
+		try {
+			pStmt = conn.prepareStatement(query);
+			pStmt.execute();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(pStmt != null && !pStmt.isClosed())
+					pStmt.close();
+			} catch (SQLException se) {
+				se.printStackTrace();
+			}
+		}
+	}
+//-----------------------------------------------------------------------------------------
 }
