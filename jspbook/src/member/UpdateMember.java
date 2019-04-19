@@ -1,11 +1,15 @@
 package member;
 
 import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+
 
 /**
  * Servlet implementation class UpdateMemberServlet
@@ -52,7 +56,13 @@ public class UpdateMember extends HttpServlet {
 		mDao.updateMember(member);
 		mDao.close();
 		
+		String message = "다음과 같이 수정하였습니다.\\n" +member.toString();
+		request.setAttribute("message", message);
+		request.setAttribute("url", "loginMain.jsp");
+		RequestDispatcher rd = request.getRequestDispatcher("alertMsg.jsp");
+		rd.forward(request, response);
+		
 		//loginMain.jsp로 다시 연결
-		response.sendRedirect("loginMain.jsp");
+//		response.sendRedirect("loginMain.jsp");
 	}
 }

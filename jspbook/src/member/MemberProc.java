@@ -27,17 +27,36 @@ public class MemberProc extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		MemberDAO mDao;
+		MemberDTO member;
+		RequestDispatcher rd;
 		String action = request.getParameter("action");
 		String strId = request.getParameter("id");
 		System.out.println(action + " , "+ strId);
 		switch(action) {
-		case "update":
-			MemberDAO mDao = new MemberDAO();
-			MemberDTO member = mDao.selectMemberById(Integer.parseInt(strId));
-			request.setAttribute("member", member);
-			RequestDispatcher rd = request.getRequestDispatcher("update.jsp");
-			rd.forward(request, response);
+		case "update": //수정버튼 클릭 시
+			mDao = new MemberDAO();
+			member = mDao.selectMemberById(Integer.parseInt(strId));
 			mDao.close();
+			request.setAttribute("member", member);
+			rd = request.getRequestDispatcher("update.jsp");
+			rd.forward(request, response);
+			break;
+			
+		case "delete": //삭제버튼 클릭 시
+			mDao = new MemberDAO();
+			member = mDao.selectMemberById(Integer.parseInt(strId));
+			mDao.deleteMember(member);
+			mDao.close();
+			String message = "id" + member + "가 삭제 되었습니다";
+//			response.sendRedirect("loginMain.jsp");
+			String url = "loginMain.jsp";
+			request.setAttribute("message", message);
+			request.setAttribute("url", url);
+			rd = request.getRequestDispatcher("alertMsg.jsp");
+			rd.forward(request, response);
+			break;
+			
 		default:
 		}
 	}

@@ -63,13 +63,12 @@
 			<!-- submit버튼 : 입력된 값을 form에 정의된 컨트롤러에 전달. 'doPost()' -->
 			<input type="submit" value="로그인" name="B1">&nbsp;&nbsp;
 	 		<input type="reset" value="재작성" name="B2">
-	 		
-		<!-- label내부의 링크 버튼 
-		<button><a href="/jspbook/member/register.html">회원가입</a></button> -->
 		</label>
-			<!-- 버튼 : 하이퍼 링크로 연결-->
-			<br><br><button onclick="location.href='register.html'">회원 가입</button>
+		<!-- form 내부의 링크 버튼 
+		<button><a href="/jspbook/member/register.html">회원가입</a></button> -->
 	</form>
+	<!-- 하이퍼 링크로 연결 : form내부에 있을 경우, loginProc 작동, 회원가입 페이지 연결불가. -->
+	<br><br><button onclick="location.href='register.html'">회원 가입</button>
 	</center>
 </body>
 </html>

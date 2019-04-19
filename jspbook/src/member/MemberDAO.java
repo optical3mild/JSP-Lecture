@@ -18,7 +18,7 @@ public class MemberDAO {
 	private Connection conn;						//[1]Connection 인터페이스의 참조변수
 	private static final String USERNAME = "javauser";
 	private static final String PASSWORD = "javapass";
-	//[2]mysql의 world DB에 접속하는 경로?
+	//[2]JDBC URL : jdbc:mysql:// IP주소:PORT(옵션)/스키마(=데이터베이스 이름)
 	private static final String URL = "jdbc:mysql://localhost:3306/world?verifyServerCertificate=false&useSSL=false";
 	
 	
@@ -31,14 +31,14 @@ public class MemberDAO {
 	//The use of a DataSource object is the preferred means of connecting to a data source.
 	public MemberDAO() {
 		try {
-			Class.forName("com.mysql.jdbc.Driver"); //[3]동적로딩
-			conn = DriverManager.getConnection(URL, USERNAME, PASSWORD); //[4]DB연결
+			Class.forName("com.mysql.jdbc.Driver"); //[3]동적로딩 : jdbc 드라이버 로드
+			conn = DriverManager.getConnection(URL, USERNAME, PASSWORD); //[4]DB연결 : Connection 클래스의 인스턴스 필요, method 이용
 		} catch (Exception ex) { //ClassNotFoundException, SQLException
 			ex.printStackTrace();
 		}
 	}
 	
-	//04.17 추가. loginProc.jsp에서 호출, password확인
+	//password확인 : plain --> hashed password
 	public int verifyIdPassword(int id, String password) {
 		System.out.println("verifyIdPassword(): " +id + ", " +password);
 		String query = "select hashed from member where id=?"; //[5]DB에서 검색하는 쿼리문
@@ -92,6 +92,8 @@ public class MemberDAO {
 			pStmt.setString(4, member.getAddress());
 			pStmt.setString(5, hashedPassword); //member객체에 없음
 			
+			//update, delete문 등을 수행할 때 사용. (select: executeQuery();)
+			//반환값: int='처리된 데이터의 수'
 			pStmt.executeUpdate();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -111,13 +113,15 @@ public class MemberDAO {
 		PreparedStatement pStmt = null;
 		
 		try {
-			pStmt = conn.prepareStatement(query);
-			pStmt.setString(1, member.getPassword());
+			pStmt = conn.prepareStatement(query); //prepareStatement객체 생성 (Connection 클래스의 method로 생성)
+			pStmt.setString(1, member.getPassword()); //쿼리문의 wildcard에 값을 넣어줌
 			pStmt.setString(2, member.getName());
 			pStmt.setString(3, member.getBirthday());
 			pStmt.setString(4, member.getAddress());
 			pStmt.setInt(5, member.getId());
 			
+			//update, delete문 등을 수행할 때 사용. (select: executeQuery();)
+			//반환값: int='처리된 데이터의 수'
 			pStmt.executeUpdate();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -196,6 +200,8 @@ public class MemberDAO {
     	
     	try {
 			pStmt = conn.prepareStatement(query);
+			
+			
 			ResultSet rs = pStmt.executeQuery();
 			
 			while (rs.next()) {

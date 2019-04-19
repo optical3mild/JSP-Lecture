@@ -36,9 +36,11 @@
 		//url 특수문자 "?" == "query" 
 		//--> servlet 컨트롤러에 request: "action=update" & "id=수신한 값"
 		//post표기가 없지만, 컨트롤러의 doGet에서 doPost를 실행하도록 정의되어 있음.
-		String uri = "memberProcServlet?action=update&id=" + member.getId();
+		String updateUri = "memberProcServlet?action=update&id=" + member.getId();
+		String deleteUri = "memberProcServlet?action=delete&id=" + member.getId();
 		%>
-		<td>&nbsp;<button onclick="location.href='<%=uri%>'">수정</button>&nbsp;</td>
+		<td>&nbsp;<button onclick="location.href='<%=updateUri%>'">수정</button>&nbsp;
+		&nbsp;<button onclick="location.href='<%=deleteUri%>'">삭제</button>&nbsp;</td>
 		</tr>
 	<%	
 	}
