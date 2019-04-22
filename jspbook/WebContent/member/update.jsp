@@ -26,9 +26,11 @@
 	<h3>회원수정</h3>
 	<!--
 	<form name="registerForm" action=/jspbook/member/registerProc.jsp method=post> -->
-	<form name="registerForm" action=/jspbook/member/updateMemberServlet?action=execute method=post>
-		
-		<!--31:form 내에서 값을 주고 받기위해 필요 -->
+	<!--
+	<form name="registerForm" action=/jspbook/member/updateMemberServlet?action=execute method=post> -->
+	
+	<form name="registerForm" action=/jspbook/member/MemberProcServlet?action=execute method=post>
+		<!--34:form 내에서 값을 주고 받기위해 필요 -->
 		<input type="hidden" id="id" name="id" value="<%=member.getId()%>">
 		
 		<label><span>아이디:</span>

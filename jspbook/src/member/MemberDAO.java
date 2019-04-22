@@ -160,6 +160,13 @@ public class MemberDAO {
 		}
 	}
 	
+	//최근 추가된 멤버
+	public MemberDTO recentId() {
+		String sql = "select * from member order by id desc limit 1;";
+		MemberDTO mDto = selectOne(sql);
+		return mDto;
+	}
+	
 	//close()
 	public void close() {
 		try {
@@ -170,11 +177,6 @@ public class MemberDAO {
 		}
 	}
 	
-	public MemberDTO recentId() {
-    	String sql = "select * from member order by id desc limit 1;";
-    	MemberDTO mDto = selectOne(sql);
-    	return mDto;
-    }
 	
 	//select * from member where id
 	public MemberDTO selectMemberById(int id) {

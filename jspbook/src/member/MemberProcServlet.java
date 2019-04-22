@@ -44,10 +44,12 @@ public class MemberProcServlet extends HttpServlet {
 		String address = null;
 		String message = null;
 		String url = null;
+		
 		request.setCharacterEncoding("UTF-8");
-		HttpSession session = request.getSession();
 		String action = request.getParameter("action");
 		
+		//로그인 정보관리 HttpSession객체 생성 : 사용자의 상태정보를 서버에서 관리함
+		HttpSession session = request.getSession();
 		
 		switch(action) {
 		case "update":		// 수정 버튼 클릭 시
@@ -94,6 +96,7 @@ public class MemberProcServlet extends HttpServlet {
 			request.setAttribute("url", url);
 			rd = request.getRequestDispatcher("alertMsg.jsp");
 			rd.forward(request, response);
+			break;
 			
 		case "login":		// login 할 때
 			if (!request.getParameter("id").equals("")) {
