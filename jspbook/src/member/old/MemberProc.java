@@ -1,4 +1,4 @@
-package member;
+package member.old;
 
 import java.io.IOException;
 
@@ -8,6 +8,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import member.MemberDAO;
+import member.MemberDTO;
 
 /**
  * Servlet implementation class MemberProc
@@ -45,10 +48,13 @@ public class MemberProc extends HttpServlet {
 			
 		case "delete": //삭제버튼 클릭 시
 			mDao = new MemberDAO();
-			member = mDao.selectMemberById(Integer.parseInt(strId));
-			mDao.deleteMember(member);
+//			member = mDao.selectMemberById(Integer.parseInt(strId));
+//			mDao.deleteMember(member);
+			int id = Integer.parseInt(strId);
+			mDao.deleteMember(id);
 			mDao.close();
-			String message = "id" + member + "가 삭제 되었습니다";
+//			String message = "id" + member + "가 삭제 되었습니다";
+			String message = "id" + id + "가 삭제 되었습니다";
 //			response.sendRedirect("loginMain.jsp");
 			String url = "loginMain.jsp";
 			request.setAttribute("message", message);

@@ -50,8 +50,9 @@
 	<!-- servlet방식의 컨트롤러 이용 시
 		 :소스 경로이므로, 확장자 없이 servlet파일에 기술된 경로를 삽입 
 		 (LoginProc.java파일의 상단참조) 
-		 action을 요청할 컨트롤러 경로, 방식(doPost로 정의된 메소드) 지정.-->
-	<form name="loginForm" action=/jspbook/member/loginProcServlet method=post>
+		 action을 요청할 컨트롤러 경로, 방식(doPost로 정의된 메소드) 지정.
+	<form name="loginForm" action=/jspbook/member/loginProcServlet method=post>-->
+	<form name="loginForm" action="/jspbook/member/MemberProcServlet?action=login" method=post>
 		<label><span>ID:</span>
 			<input type="text" name="id" size="10">
 		</label>

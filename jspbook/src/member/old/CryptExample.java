@@ -1,4 +1,6 @@
-package member;
+package member.old;
+
+import member.MemberDAO;
 
 public class CryptExample {
 	public static void main(String[] args) {

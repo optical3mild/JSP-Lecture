@@ -56,7 +56,7 @@ public class MemberDAO {
 //				dbPassword = rs.getString(1);
 //				if(dbPassword.equals(password))
 				hashedPassword = rs.getString(1);
-				if(BCrypt.checkpw(password, hashedPassword)) //??????
+				if(BCrypt.checkpw(password, hashedPassword))
 					return ID_PASSWORD_MATCH;
 				else
 					return PASSWORD_IS_WRONG;
@@ -136,14 +136,16 @@ public class MemberDAO {
 	}
 	
 	//delete
-	public void deleteMember(MemberDTO member) {
+//	public void deleteMember(MemberDTO member) {
+	public void deleteMember(int id) {
 		//매개변수: DTO로 받아도 되고, 정수값으로 받아도 됨. (int num) 
 		String query = "delete from member where id=?;";
 		PreparedStatement pStmt = null;
 		
 		try {
 			pStmt = conn.prepareStatement(query);
-			pStmt.setInt(1, member.getId());
+//			pStmt.setInt(1, member.getId());
+			pStmt.setInt(1, id);
 			
 			pStmt.executeUpdate();
 		} catch (Exception e) {
@@ -167,7 +169,12 @@ public class MemberDAO {
 			e.printStackTrace();
 		}
 	}
-
+	
+	public MemberDTO recentId() {
+    	String sql = "select * from member order by id desc limit 1;";
+    	MemberDTO mDto = selectOne(sql);
+    	return mDto;
+    }
 	
 	//select * from member where id
 	public MemberDTO selectMemberById(int id) {

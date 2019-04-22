@@ -15,7 +15,10 @@
 	<!-- jsp 컨트롤러
 	<form name="registerForm" action=/jspbook/member/registerProc.jsp method=post> -->
 	
-	<form name="registerForm" action=/jspbook/member/registerProcServlet method=post>
+	<!-- 	
+	<form name="registerForm" action=/jspbook/member/registerProcServlet method=post> -->
+	
+	<form name="registerForm" action=/jspbook/member/registerProcServlet?action=register method=post>
 		<label><span>Password:</span>
 			<input type="password" name="password" size="10">
 		</label>
