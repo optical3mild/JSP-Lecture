@@ -20,33 +20,38 @@
 	</style>
 </head>
 <body>
-	<h3>회원명단</h3>
-	<%=(String)session.getAttribute("memberName")%> 회원님 반갑습니다.<br>
-	<a href="/jspbook/member/MemberProcServlet?action=logout">로그아웃</a>
-	<hr>
-	<table border="1" style="border-collapse:collapse;">
-	<tr><th>아이디</th><th>이름</th><th>생일</th><th>주소</th><th>액션</th></tr>
-	<%
-	for (MemberDTO member: list) {
-	%>
-		<tr>
-		<td><%=member.getId()%></td>
-		<td><%=member.getName()%></td>
-		<td><%=member.getBirthday()%></td>
-		<td><%=member.getAddress()%></td>
+	<div align=center>
+		<h3>회원명단</h3>
+		<%=(String)session.getAttribute("memberName")%> 회원님 반갑습니다.<br>
+		<a href="bbs_list.jsp">게시판</a>&nbsp;&nbsp;&nbsp;
+		<!-- 트위터 목록 Link -->
+		<a href="twitter_list.jsp">트윗</a>&nbsp;&nbsp;&nbsp;
+		<a href="/jspbook/member/MemberProcServlet?action=logout">로그아웃</a>
+		<hr>
+		<table border="1" style="border-collapse:collapse;">
+		<tr><th>아이디</th><th>이름</th><th>생일</th><th>주소</th><th>액션</th></tr>
 		<%
-		//url 특수문자 "?" == "query" 
-		//--> servlet 컨트롤러에 request: "action=update" & "id=수신한 값"
-		//post표기가 없지만, 컨트롤러의 doGet에서 doPost를 실행하도록 정의되어 있음.
-		String updateUri = "MemberProcServlet?action=update&id=" + member.getId();
-		String deleteUri = "MemberProcServlet?action=delete&id=" + member.getId();
+		for (MemberDTO member: list) {
 		%>
-		<td>&nbsp;<button onclick="location.href='<%=updateUri%>'">수정</button>&nbsp;
-		&nbsp;<button onclick="location.href='<%=deleteUri%>'">삭제</button>&nbsp;</td>
-		</tr>
-	<%	
-	}
-	%>
-	</table>
+			<tr>
+			<td><%=member.getId()%></td>
+			<td><%=member.getName()%></td>
+			<td><%=member.getBirthday()%></td>
+			<td><%=member.getAddress()%></td>
+			<%
+			//url 특수문자 "?" == "query" 
+			//--> servlet 컨트롤러에 request: "action=update" & "id=수신한 값"
+			//post표기가 없지만, 컨트롤러의 doGet에서 doPost를 실행하도록 정의되어 있음.
+			String updateUri = "MemberProcServlet?action=update&id=" + member.getId();
+			String deleteUri = "MemberProcServlet?action=delete&id=" + member.getId();
+			%>
+			<td>&nbsp;<button onclick="location.href='<%=updateUri%>'">수정</button>&nbsp;
+			&nbsp;<button onclick="location.href='<%=deleteUri%>'">삭제</button>&nbsp;</td>
+			</tr>
+		<%	
+		}
+		%>
+		</table>
+	</div>
 </body>
 </html>
