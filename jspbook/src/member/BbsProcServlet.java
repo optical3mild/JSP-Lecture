@@ -52,13 +52,14 @@ public class BbsProcServlet extends HttpServlet {
 		case "contentView":
 			//클릭된 글의 id를 가져온다(members의 id와 다름)
 			//request로 받은 parameter는 변수에 저장하여 사용하여야 한다.
-			System.out.println(request.getParameter("contentId"));
-			contentId = Integer.parseInt(request.getParameter("contentId"));
-			
-			System.out.println(contentId);
+//			System.out.println(request.getParameter("contentId"));
+			if(request.getParameter("contentId").endsWith(";")) {
+				contentId = (request.getParameter("contentId").charAt(0)) - '0';
+			} else {
+				contentId = Integer.parseInt(request.getParameter("contentId"));
+			}
 			bDao = new BbsDAO();
 			bMem = bDao.detailsearch(contentId);
-//			System.out.println(bDao.detailsearch(id));
 			request.setAttribute("selectedContent", bMem);
 			rd = request.getRequestDispatcher("bbs_contents.jsp");
 			rd.forward(request, response);
@@ -69,21 +70,27 @@ public class BbsProcServlet extends HttpServlet {
 			bDao = new BbsDAO();
 			//해당 글의 id로 memberId확인
 			contentId = Integer.parseInt(request.getParameter("contentId"));
-			System.out.println(contentId);
 			contentMemId = bDao.selectContentById(contentId).getMemberId();
-			System.out.println(contentMemId);
-//			if (!request.getParameter("contentId").equals("")) {
-//				id = Integer.parseInt(request.getParameter("contentMemId"));
-//			}
 			if (contentMemId != (Integer)session.getAttribute("memberId")) {
 				message = "id = " + contentId + " 에 대한 수정 권한이 없습니다.";
 				rd = request.getRequestDispatcher("alertMsg.jsp");
-				url = "BbsProcServlet?action=contentView&contentId="+contentId;
 				request.setAttribute("message", message);
+				
+				//controlView에서 파라미터를 얻을 때 숫자+;로 값이 얻어져 예외 발생.
+				url = "BbsProcServlet?action=contentView&contentId="+contentId;
 				request.setAttribute("url",url);
+				
+				//오류메세지 뜨지 않음 : Attribute설정 무시하고 바로 연결
+//				response.sendRedirect(url);
+				
 				rd.forward(request, response);
 				break;
 			}
+			bMem = bDao.detailsearch(contentId);
+			request.setAttribute("selectedContent", bMem);
+			rd = request.getRequestDispatcher("bbs_con_modi.jsp");
+			rd.forward(request, response);
+			break;
 //			mDao = new MemberDAO();
 //			member = mDao.selectMemberById(id);
 //			mDao.close();
@@ -179,28 +186,32 @@ public class BbsProcServlet extends HttpServlet {
 //			mDao.close();
 //			break;
 //			
-//		case "execute":			// 회원 수정정보 입력 후 실행할 때
-//			if (!request.getParameter("id").equals("")) {
-//				id = Integer.parseInt(request.getParameter("id"));
-//			}
-//			name = request.getParameter("name");
-//			birthday = request.getParameter("birthday");
-//			address = request.getParameter("address");
-//			
-//			member = new MemberDTO(id, "*", name, birthday, address);
-//			System.out.println(member.toString());
-//			
-//			mDao = new MemberDAO();
-//			mDao.updateMember(member);
-//			mDao.close();
-//			
-//			message = "다음과 같이 수정하였습니다.\\n" + member.toString();
-//			request.setAttribute("message", message);
-//			request.setAttribute("url", "loginMain.jsp");
-//			rd = request.getRequestDispatcher("alertMsg.jsp");
-//	        rd.forward(request, response);
-//			//response.sendRedirect("loginMain.jsp");
-//			break;
+		case "execute":			// 게시글 수정후 저장
+			//memberId검사 재실행 필요?
+			//파라미터 값 얻은다음 : memberId는 세션에서 획득 (DAO의 update method실행 시 필요)
+			//DTO에 저장
+			//DAO의 update실행, DB에 업로드
+			if (!request.getParameter("id").equals("")) {
+				id = Integer.parseInt(request.getParameter("id"));
+			}
+			name = request.getParameter("name");
+			birthday = request.getParameter("birthday");
+			address = request.getParameter("address");
+			
+			member = new MemberDTO(id, "*", name, birthday, address);
+			System.out.println(member.toString());
+			
+			mDao = new MemberDAO();
+			mDao.updateMember(member);
+			mDao.close();
+			
+			message = "다음과 같이 수정하였습니다.\\n" + member.toString();
+			request.setAttribute("message", message);
+			request.setAttribute("url", "loginMain.jsp");
+			rd = request.getRequestDispatcher("alertMsg.jsp");
+	        rd.forward(request, response);
+			//response.sendRedirect("loginMain.jsp");
+			break;
 			
 		default:
 		}

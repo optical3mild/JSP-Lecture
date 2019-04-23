@@ -43,8 +43,5 @@
 		</label>
 	</form>
 	</div>
-		
-	
-
 </body>
 </html>
