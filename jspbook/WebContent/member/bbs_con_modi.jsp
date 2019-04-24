@@ -6,6 +6,9 @@
 <%
 	//content에 받은정보를 저장
 	BbsMember content = (BbsMember) request.getAttribute("selectedContent");
+
+	int curPage = (int)session.getAttribute("currentBbsPage");
+	String url = "BbsProcServlet?action=getList&page=" + curPage;
 %>
 <html>
 <head>
@@ -30,7 +33,10 @@
  			<input type="reset" value="재작성" name="B2">
 		</label>
 	</form>
-	<br><br><button onclick="location.href='BbsProcServlet?action=getList&'">BBS게시판</button>
+	<br>
+	<!--  
+	<button onclick="location.href='BbsProcServlet?action=getList&page=1'">BBS게시판</button>-->
+	<button onclick="location.href='<%=url%>'">BBS게시판</button>
 	</div>
 </body>
 </html>

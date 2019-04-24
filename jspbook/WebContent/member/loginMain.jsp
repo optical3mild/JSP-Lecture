@@ -23,11 +23,15 @@
 	<div align=center>
 		<h3>회원명단</h3>
 		<%=(String)session.getAttribute("memberName")%> 회원님 반갑습니다.<br>
-		<a href="/jspbook/member/BbsProcServlet?action=getList">게시판(servlet이용/수정중)</a>&nbsp;&nbsp;&nbsp;
-		<a href="bbs_list.jsp">게시판</a>&nbsp;&nbsp;&nbsp;
+		<!--
+		<a href="/jspbook/member/BbsProcServlet?action=getList">게시판(servlet이용/수정중)</a>&nbsp;&nbsp;&nbsp;   -->
+		
+		<!-- 게시판 이동, 파라메터 전달 -->
+		<a href="BbsProcServlet?action=getList&page=1">게시판</a>&nbsp;&nbsp;&nbsp;
+		
 		<!-- 트위터 목록 Link -->
 		<a href="twitter_list.jsp">트윗</a>&nbsp;&nbsp;&nbsp;
-		<a href="/jspbook/member/MemberProcServlet?action=logout">로그아웃</a>
+		<a href="MemberProcServlet?action=logout">로그아웃</a>
 		<hr>
 		<table border="1" style="border-collapse:collapse;">
 		<tr><th>아이디</th><th>이름</th><th>생일</th><th>주소</th><th>액션</th></tr>

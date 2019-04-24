@@ -6,6 +6,8 @@
 <%
 	//content에 받은정보를 저장
 	BbsMember content = (BbsMember) request.getAttribute("selectedContent");
+
+	int curPage = (int)session.getAttribute("currentBbsPage");
 %>
 <html>
 <head>
@@ -26,10 +28,13 @@
 		out.println(content.getContent());
 		String updateUri = "BbsProcServlet?action=update&contentId=" + content.getId();
 		String deleteUri = "BbsProcServlet?action=delete&contentId=" + content.getId();
+		
+		String url = "BbsProcServlet?action=getList&page=" + curPage;
 		%>
 		<br>
 		<hr>
-		<button onclick="location.href='bbs_list.jsp'">BBS게시판</button>&nbsp;
+		<!-- <button onclick="location.href='BbsProcServlet?action=getList&page=1'">BBS게시판</button>&nbsp; -->
+			<button onclick="location.href='<%=url%>'">BBS게시판</button>&nbsp;
 			&nbsp;<button onclick="location.href='<%=updateUri%>'">수정</button>&nbsp;
 			&nbsp;<button onclick="location.href='<%=deleteUri%>'">삭제</button>
 	</div>
