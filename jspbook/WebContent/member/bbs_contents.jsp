@@ -16,7 +16,7 @@
 	<div align=center>
 		<h3><%=content.getTitle() %></h3>
 		<div align=right>
-			글번호: <%=content.getTitle() %><br>
+			글번호: <%=content.getId() %><br>
 			작성자: <%=content.getName() %><br>
 			최종수정: <%=content.getDate() %><br>
 		</div>
@@ -25,12 +25,13 @@
 
 		out.println(content.getContent());
 		String updateUri = "BbsProcServlet?action=update&contentId=" + content.getId();
+		String deleteUri = "BbsProcServlet?action=delete&contentId=" + content.getId();
 		%>
 		<br>
 		<hr>
 		<button onclick="location.href='bbs_list.jsp'">BBS게시판</button>&nbsp;
-		
-			&nbsp;<button onclick="location.href='<%=updateUri%>'">수정</button>
+			&nbsp;<button onclick="location.href='<%=updateUri%>'">수정</button>&nbsp;
+			&nbsp;<button onclick="location.href='<%=deleteUri%>'">삭제</button>
 	</div>
 		
 	

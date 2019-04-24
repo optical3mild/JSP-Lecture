@@ -10,38 +10,27 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title><%=content.getTitle() %></title>
+<title>글 수정</title>
 </head>
 <body>
 	<div align=center>
-	<form name="contentModiForm" action=/jspbook/member/BbsProcServlet?action=update method=post>
+	<h3><%=content.getTitle() %></h3>
+	<form name="contentModiForm" action=BbsProcServlet?action=execute method=post>
 		<!--34:form 내에서 값을 주고 받기위해 필요 -->
-		<!--  <input type="hidden" name="memberId" value=""> -->
-		
+		<input type="hidden" name="contentId" value="<%=content.getId()%>">
 		<label><span>제목:</span>
 			<input type="text" name="title" value="<%=content.getTitle() %>" size="50">
-		</label>
-		<label><span>글번호:</span>
-			<%=content.getId() %>
-			<input type="hidden" name="contentId" value="<%=content.getId()%>">
-		</label>
-		<label><span>작성자:</span>
-			<%=content.getName() %>
-			<input type="hidden" name="getName" value="<%=content.getName()%>">
-		</label>
-		<label><span>최종수정:</span>
-			<%=content.getDate() %>
-			<input type="hidden" name="Date" value="<%=content.getDate()%>">
-		</label>
-		<label><span>본문:</span><br>
-			<input type="text" name="content" value="<%=content.getContent() %>"size="400">
-		</label>
+		</label><br><br>
+		<label><span>내용:</span>
+			<textarea name="content" rows="30" cols="51" ><%=content.getContent() %></textarea>
+		</label><br>
 		<label>
 			<span></span>
 			<input type="submit" value="저장" name="B1">&nbsp;&nbsp;
  			<input type="reset" value="재작성" name="B2">
 		</label>
 	</form>
+	<br><br><button onclick="location.href='BbsProcServlet?action=getList&'">BBS게시판</button>
 	</div>
 </body>
 </html>

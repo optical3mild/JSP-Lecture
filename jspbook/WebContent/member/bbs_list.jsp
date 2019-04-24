@@ -4,10 +4,17 @@
 <!-- 필요한 자바 클래스와 정의한 클래스, 컨트롤러를 import -->
 <%@ page import="java.util.*, member.*" %>
 <%
-	BbsDAO bDao = new BbsDAO();
-	//selectContentsAll로 DB의 정보를 읽어온다.
-	List<BbsMember> contentsList = bDao.selectContentsAll(10);
-	bDao.close();
+//	BbsDAO bDao = new BbsDAO();
+//	//selectContentsAll로 DB의 정보를 읽어온다.
+//	List<BbsMember> contentsList = bDao.selectContentsAll(10);
+//	bDao.close();
+
+	request.setCharacterEncoding("UTF-8");
+	//BbsProcServlet에서 리스트를 받아온다.
+	//[1] BbsMember의 List : 10개씩 묶어 리스트로 받아옴 (<-BbsProcServlet).
+	List<BbsMember> contentsList = (List<BbsMember>)request.getAttribute("contentsList");
+	//[2] 한번에 보여줄 목록의 묶음(=페이지 구성)의 번호목록 (<-BbsProcServlet).
+	List<String> pageList = (List<String>)request.getAttribute("pageList");
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -23,14 +30,13 @@
 	<div align=center>
 		<h3>BBS게시판</h3>
 		<%=(String)session.getAttribute("memberName")%> 회원님 반갑습니다.<br>
-		<!-- 메인화면 -->
+		<a href="bbs_write.html">글쓰기</a>&nbsp;&nbsp;&nbsp;
 		<a href="loginMain.jsp">메인화면</a>&nbsp;&nbsp;&nbsp;
-		<!-- 트위터 목록 Link -->
 		<a href="twitter_list.jsp">트윗</a>&nbsp;&nbsp;&nbsp;
-		<a href="/jspbook/member/MemberProcServlet?action=logout">로그아웃</a>
+		<a href="MemberProcServlet?action=logout">로그아웃</a>
 		<hr>
 		<table border="1" style="border-collapse:collapse;">
-		<tr><th>아이디</th><th>이름</th><th>제목</th><th>최종날짜</th></tr>
+		<tr><th>글번호</th><th>이름</th><th>제목</th><th>최종날짜</th><th>액션</th></tr>
 		
 		<%
 		for (BbsMember content: contentsList) {
@@ -38,19 +44,26 @@
  			//--> servlet 컨트롤러에 request: "action=update" & "id=수신한 값"
  			//post표기가 없지만, 컨트롤러의 doGet에서 doPost를 실행하도록 정의되어 있음.
  			String contentUri = "BbsProcServlet?action=contentView&contentId=" + content.getId();
- 			//out.println(content.getId()); --> 나옴
+			String updateUri = "BbsProcServlet?action=update&contentId=" + content.getId();
+			String deleteUri = "BbsProcServlet?action=delete&contentId=" + content.getId();
 		%>
-			<tr onclick="location.href='<%=contentUri%>'">
-			<td><%=content.getId()%></td>
-			<td><%=content.getName()%></td>
-			<td><%=content.getTitle()%></td>
-			<td><%=content.getDate()%></td>
-
+			<tr>
+			<td onclick="location.href='<%=contentUri%>'"><%=content.getId()%></td>
+			<td onclick="location.href='<%=contentUri%>'"><%=content.getName()%></td>
+			<td onclick="location.href='<%=contentUri%>'"><%=content.getTitle()%></td>
+			<td onclick="location.href='<%=contentUri%>'"><%=content.getDate()%></td>
+			<td>&nbsp;<button onclick="location.href='<%=updateUri%>'">수정</button>&nbsp;
+			&nbsp;<button onclick="location.href='<%=deleteUri%>'">삭제</button>&nbsp;</td>
 			</tr>
 		<%	
 		}
 		%>
 		</table>
+		<%
+			//페이지 번호 출력
+			for (String bmPage: pageList)
+				out.print(bmPage);
+		%>
 	</div>
 </body>
 </html>

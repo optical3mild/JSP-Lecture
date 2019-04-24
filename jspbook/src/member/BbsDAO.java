@@ -85,6 +85,40 @@ public class BbsDAO {
 		return bbsMemList;
 	}
 	
+	//04.24 추가
+	public List<BbsMember> selectContentsByMemberId(int memberId, int number) {
+		String query = "select b.id, b.title, m.name, b.date from bbs_table as b "+
+						"join member as m on b.memberId=m.id where b.memberId=? order by b.date desc limit ?;";
+		PreparedStatement pStmt = null;
+		List<BbsMember> bbsMemList = new ArrayList<BbsMember>();
+		
+		try {
+			pStmt = conn.prepareStatement(query);
+			pStmt.setInt(1, memberId);
+			pStmt.setInt(2, number);
+			ResultSet rs = pStmt.executeQuery();
+			
+			while(rs.next()) { //DB에서 data수신
+				BbsMember bmDto = new BbsMember();
+				bmDto.setId(rs.getInt(1));
+				bmDto.setTitle(rs.getString(2));
+				bmDto.setName(rs.getString(3));
+				bmDto.setDate(rs.getString(4));
+				bbsMemList.add(bmDto);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(pStmt != null && !pStmt.isClosed())
+					pStmt.close();
+			} catch (SQLException se) {
+				se.printStackTrace();
+			}
+		}
+		return bbsMemList;
+	}
+	
 	//update
 	public void updateText(BbsDTO updateText, int memberId) {
 		String query = "update bbs_table as b inner join member as m "+
@@ -112,14 +146,13 @@ public class BbsDAO {
 	}
 	
 	//delete
-	public void deleteText(BbsDTO updateText) { //매개변수: DTO로 받아도 되고, 정수값으로 받아도 됨. (int num) 
-		String query = "delete from bbs_table from bbs_table as b inner join member as m "+
-						"on b.memberId = m.id where b.id=?;";
+	public void deleteText(int id) { //매개변수: DTO로 받아도 되고, 정수값으로 받아도 됨. (int num) 
+		String query = "delete from bbs_table where id=?;";
 		PreparedStatement pStmt = null;
 		
 		try {
 			pStmt = conn.prepareStatement(query);
-			pStmt.setInt(1, updateText.getId());
+			pStmt.setInt(1, id);
 			
 			pStmt.executeUpdate();
 		} catch (Exception e) {
@@ -193,8 +226,8 @@ public class BbsDAO {
 			while (rs.next()) {
 				bDto.setId(rs.getInt(1));
 				bDto.setMemberId(rs.getInt(2));
-				bDto.setTitle(rs.getString(2));
-				bDto.setDate(rs.getString(3));
+				bDto.setTitle(rs.getString(3));
+				bDto.setDate(rs.getString(4));
 				bDto.setContent(rs.getString(5));
 			}
 		} catch (Exception e) {

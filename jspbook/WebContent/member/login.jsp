@@ -39,7 +39,7 @@
 		out.println("<script>alert('"+error+"')</script>");
 	}
 %>
-	<center>
+	<div align=center>
 	<br>
 	<h3>Member Login</h3>
 	<hr>
@@ -71,6 +71,6 @@
 	</form>
 	<!-- 하이퍼 링크로 연결 : form내부에 있을 경우, loginProc 작동, 회원가입 페이지 연결불가. -->
 	<br><br><button onclick="location.href='register.html'">회원 가입</button>
-	</center>
+	</div>
 </body>
 </html>

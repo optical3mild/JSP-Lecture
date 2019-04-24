@@ -12,8 +12,8 @@
 	String url = (String)request.getAttribute("url");
 %>
 <script type="text/javascript">
-	var message = '<%=message%>';
-	var returnUrl = '<%=url%>;'
+	var message = '<%=message%>'
+	var returnUrl = '<%=url%>'
 	alert(message);
 	document.location.href = returnUrl;
 </script>
