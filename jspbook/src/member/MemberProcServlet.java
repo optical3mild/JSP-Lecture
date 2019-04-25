@@ -1,7 +1,8 @@
 package member;
 
 import java.io.IOException;
-import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -11,16 +12,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-/**
- * Servlet implementation class memberProcServlet
- */
 @WebServlet("/member/MemberProcServlet")
 public class MemberProcServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
     public MemberProcServlet() {
         super();
     }
@@ -45,20 +40,64 @@ public class MemberProcServlet extends HttpServlet {
 		String message = null;
 		String url = null;
 		
+		//현재 page저장
+		int curMemListPage = 1;
+		List<String> memPageList = new ArrayList<String>();
+		
 		request.setCharacterEncoding("UTF-8");
 		String action = request.getParameter("action");
-		
 		//로그인 정보관리 HttpSession객체 생성 : 사용자의 상태정보를 서버에서 관리함
 		HttpSession session = request.getSession();
 		
 		switch(action) {
+		case "getMemList":
+			mDao = new MemberDAO();
+			if (!request.getParameter("page").equals("")) {
+				curMemListPage = Integer.parseInt(request.getParameter("page"));
+			}
+			
+			int count = mDao.getCount();
+			if (count == 0)			// 데이터가 없을 때 대비
+				count = 1;
+			int pageNo = (int)Math.ceil(count/10.0);
+			if (curMemListPage > pageNo)	// 경계선에 걸렸을 때 대비
+				curMemListPage--;
+			
+			//세션에 현재페이지 번호 저장
+			session.setAttribute("curMemListPage", curMemListPage);
+			
+			// 리스트 페이지의 하단 페이지 데이터 만들어 주기
+			String page = null;
+			
+			page = "<a href=#>&laquo;</a>&nbsp;";
+			memPageList.add(page);
+			
+			for (int i=1; i<=pageNo; i++) {
+				page = "&nbsp;<a href=MemberProcServlet?action=getMemList&page=" + i + ">" + i + "</a>&nbsp;";
+				memPageList.add(page);
+			}
+			
+			page = "&nbsp;<a href=#>&raquo;</a>";
+			memPageList.add(page);
+			
+			List<MemberDTO> memberList = mDao.makeMemList(curMemListPage);
+			request.setAttribute("memberList", memberList);
+			request.setAttribute("memPageList", memPageList);
+			rd = request.getRequestDispatcher("loginMain.jsp");
+	        rd.forward(request, response);
+			break;
+		
+		
 		case "update":		// 수정 버튼 클릭 시
 			if (!request.getParameter("id").equals("")) {
 				id = Integer.parseInt(request.getParameter("id"));
 			}
 			if (id != (Integer)session.getAttribute("memberId")) {
 				message = "id = " + id + " 에 대한 수정 권한이 없습니다.";
-				url = "loginMain.jsp";
+				
+				curMemListPage = (int)session.getAttribute("curMemListPage");
+				url = "MemberProcServlet?action=getMemList&page=" + curMemListPage;
+				
 				request.setAttribute("message", message);
 				request.setAttribute("url", url);
 				rd = request.getRequestDispatcher("alertMsg.jsp");
@@ -79,7 +118,10 @@ public class MemberProcServlet extends HttpServlet {
 			}
 			if (id != (Integer)session.getAttribute("memberId")) {
 				message = "id = " + id + " 에 대한 삭제 권한이 없습니다.";
-				url = "loginMain.jsp";
+				
+				curMemListPage = (int)session.getAttribute("curMemListPage");
+				url = "MemberProcServlet?action=getMemList&page=" + curMemListPage;
+				
 				request.setAttribute("message", message);
 				request.setAttribute("url", url);
 				rd = request.getRequestDispatcher("alertMsg.jsp");
@@ -89,9 +131,11 @@ public class MemberProcServlet extends HttpServlet {
 			mDao = new MemberDAO();
 			mDao.deleteMember(id);
 			mDao.close();
-			//response.sendRedirect("loginMain.jsp");
 			message = "id = " + id + " 이/가 삭제되었습니다.";
-			url = "loginMain.jsp";
+			
+			curMemListPage = (int)session.getAttribute("curMemListPage");
+			url = "MemberProcServlet?action=getMemList&page=" + curMemListPage;
+			
 			request.setAttribute("message", message);
 			request.setAttribute("url", url);
 			rd = request.getRequestDispatcher("alertMsg.jsp");
@@ -99,6 +143,7 @@ public class MemberProcServlet extends HttpServlet {
 			break;
 			
 		case "login":		// login 할 때
+			mDao = new MemberDAO();
 			if (!request.getParameter("id").equals("")) {
 				id = Integer.parseInt(request.getParameter("id"));
 			}
@@ -122,11 +167,14 @@ public class MemberProcServlet extends HttpServlet {
 				member = mDao.selectMemberById(id);
 				session.setAttribute("memberId", id);
 				session.setAttribute("memberName", member.getName());
-				response.sendRedirect("loginMain.jsp");
+				
+				response.sendRedirect("MemberProcServlet?action=getMemList&page=1");
 			} else {
-				String uri = "login.jsp?error=" + URLEncoder.encode(errorMessage, "UTF-8");
-						//org.apache.jasper.runtime.JspRuntimeLibrary.URLEncode(String.valueOf(errorMessage), request.getCharacterEncoding());
-				response.sendRedirect(uri); 
+				url = "login.jsp";
+				request.setAttribute("message", errorMessage);
+				request.setAttribute("url", url);
+				rd = request.getRequestDispatcher("alertMsg.jsp");
+				rd.forward(request, response);
 			}
 			mDao.close();
 			break;

@@ -4,15 +4,14 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Alert Message</title>
+<title>ch10: EL 예제</title>
 </head>
 <body>
-<script type="text/javascript">
-//자바스크립트 안에서도 EL적용됨
-	var message = '${requestScope.message}';
-	var returnUrl = '${requestScope.url}';
-	alert(message);
-	document.location.href = returnUrl;
-</script>
+	<div align=center>
+	<h2>ch10: EL 예제</h2>
+	<hr>
+		1.선택한 상품은 : ${param.sel}<br>
+		2. num1 + num2 = ${product.num1 + product.num2} <br>
+	</div>
 </body>
 </html>

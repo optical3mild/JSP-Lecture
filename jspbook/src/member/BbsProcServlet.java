@@ -68,26 +68,31 @@ public class BbsProcServlet extends HttpServlet {
 		switch(action) {
 		case "getList":
 			bDao = new BbsDAO();
-//			contentMemId = (Integer)session.getAttribute("memberId");
 			if (!request.getParameter("page").equals("")) {
 				curPage = Integer.parseInt(request.getParameter("page"));
 			}
-			bDao = new BbsDAO();
+			
 			int count = bDao.getCount();
 			if (count == 0)			// 데이터가 없을 때 대비
 				count = 1;
 			int pageNo = (int)Math.ceil(count/10.0);
 			if (curPage > pageNo)	// 경계선에 걸렸을 때 대비
 				curPage--;
+			
+			//세션에 현재페이지 번호 저장
 			session.setAttribute("currentBbsPage", curPage);
+			
 			// 리스트 페이지의 하단 페이지 데이터 만들어 주기
 			String page = null;
+			
 			page = "<a href=#>&laquo;</a>&nbsp;";
 			pageList.add(page);
+			
 			for (int i=1; i<=pageNo; i++) {
 				page = "&nbsp;<a href=BbsProcServlet?action=getList&page=" + i + ">" + i + "</a>&nbsp;";
 				pageList.add(page);
 			}
+			
 			page = "&nbsp;<a href=#>&raquo;</a>";
 			pageList.add(page);
 			
@@ -219,7 +224,6 @@ public class BbsProcServlet extends HttpServlet {
 			}
 			
 			title = request.getParameter("title");
-//			content = request.getParameter("content").replace("\r\n", "<br>");
 			content = lf2Br(request.getParameter("content"));
 			
 			//contentId에 해당하는 객체
@@ -230,25 +234,19 @@ public class BbsProcServlet extends HttpServlet {
 			//DAO의 method 실행.
 			bDao.updateText(bDto, contentMemId);
 			
-			bDao.close();
-			curPage = (int)session.getAttribute("currentBbsPage");
-			response.sendRedirect("BbsProcServlet?action=getList&page=" + curPage);
-			break;
-			
-			//알림메시지 작동안됨. 페이지 이동도 불가 --> 확인필요
-//			message = "다음과 같이 수정하였습니다.\\n" + bDto.toString();
-////			url = "BbsProcServlet?action=contentView&contentId="+contentId;
-//			url = "BbsProcServlet?action=getList&page=1";
-//			System.out.println(url);
 //			bDao.close();
-//			request.setAttribute("message", message);
-//			request.setAttribute("url", url);
-//			System.out.println("PointA");
-//			rd = request.getRequestDispatcher("alertMsg.jsp");
-//			System.out.println("PointB");
-//	        rd.forward(request, response);
-//	        System.out.println("PointC");
+//			response.sendRedirect("BbsProcServlet?action=getList&page=" + curPage);
 //			break;
+			
+			message = "다음과 같이 수정하였습니다.\\n" + bDto.toString();
+			curPage = (int)session.getAttribute("currentBbsPage");
+			url = "BbsProcServlet?action=getList&page=" + curPage;
+			bDao.close();
+			request.setAttribute("message", message);
+			request.setAttribute("url", url);
+			rd = request.getRequestDispatcher("alertMsg.jsp");
+	        rd.forward(request, response);
+			break;
 			
 //		List<BbsMember> contentsList = null;
 //		case "makeListBy": //작업중. 컬럼 값 별로 검색하는 기능 추가시도

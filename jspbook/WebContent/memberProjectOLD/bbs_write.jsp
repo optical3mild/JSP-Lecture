@@ -1,21 +1,33 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<!-- 필요한 자바 클래스와 정의한 클래스, 컨트롤러를 import -->
-<%@ page import="java.util.*, member.*" %>
-
-<!-- jstl core라이브러리 -->
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-   
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    
+<%@ page import="java.util.*, member.*" %>    
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<%
+	//content에 받은정보를 저장
+	BbsMember content = (BbsMember) request.getAttribute("selectedContent");
+
+	int curPage = (int)session.getAttribute("currentBbsPage");
+	String pageUrl = "BbsProcServlet?action=getList&page=" + curPage;
+%>
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>새글 작성</title>
+	<!-- 
+	<style>
+		label { display:block; /*padding:5px;*/}
+		label span { 
+			display:inline-block; padding:10px;
+			text-align:right; width:90px;}
+	</style>
+	 -->
 </head>
 <body>
 	<div align=center>
 	<h3>새글 작성</h3>
-	${memberName} 회원님 반갑습니다.<br>
-	<a href="BbsProcServlet?action=getList&page=${currentBbsPage}">게시판으로 되돌아가기</a>&nbsp;&nbsp;&nbsp;
+	<%=(String)session.getAttribute("memberName")%> 회원님 반갑습니다.<br>
+	<a href="<%=pageUrl%>">게시판으로 되돌아가기</a>&nbsp;&nbsp;&nbsp;
 	<a href="MemberProcServlet?action=logout">로그아웃</a>
 	<hr>
 	<br>

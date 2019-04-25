@@ -28,12 +28,32 @@
 	</style>
 </head>
 <body>
+<%
+	//request.setCharacterEncoding("UTF-8");
+
+	//LoginProc에 parameter값을 요청, 참조변수에 저장.
+	String error = request.getParameter("error");
+	//String error = (String)request.getAttribute("error"); //LoginProc.java에서 setAttribute로 보낸것을 수신
+	if(error!=null) {
+		System.out.println(error);
+		out.println("<script>alert('"+error+"')</script>");
+	}
+%>
 	<div align=center>
 	<br>
 	<h3>Member Login</h3>
 	<hr>
 	
-	<form name="loginForm" action="MemberProcServlet?action=login" method=post>
+	<!-- jsp방식의 컨트롤러 이용 시
+	<form name="loginForm" action=/jspbook/member/loginProc.jsp method=post> -->
+	
+	<!-- servlet방식의 컨트롤러 이용 시
+		 :소스 경로이므로, 확장자 없이 servlet파일에 기술된 경로를 삽입 
+		 (LoginProc.java파일의 상단참조) 
+		 action을 요청할 컨트롤러 경로, 방식(doPost로 정의된 메소드) 지정.
+	<form name="loginForm" action=/jspbook/member/loginProcServlet method=post>-->
+	
+	<form name="loginForm" action="/jspbook/member/MemberProcServlet?action=login" method=post>
 		<label><span>ID:</span>
 			<input type="text" name="id" size="10">
 		</label>
@@ -46,7 +66,10 @@
 			<input type="submit" value="로그인" name="B1">&nbsp;&nbsp;
 	 		<input type="reset" value="재작성" name="B2">
 		</label>
+		<!-- form 내부의 링크 버튼 
+		<button><a href="/jspbook/member/register.html">회원가입</a></button> -->
 	</form>
+	<!-- 하이퍼 링크로 연결 : form내부에 있을 경우, loginProc 작동, 회원가입 페이지 연결불가. -->
 	<br><br><button onclick="location.href='register.html'">회원 가입</button>
 	</div>
 </body>

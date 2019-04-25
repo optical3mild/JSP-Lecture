@@ -7,12 +7,17 @@
 <title>Alert Message</title>
 </head>
 <body>
+<%
+	String message = (String)request.getAttribute("message");
+	String url = (String)request.getAttribute("url");
+%>
 <script type="text/javascript">
-//자바스크립트 안에서도 EL적용됨
-	var message = '${requestScope.message}';
-	var returnUrl = '${requestScope.url}';
+	var message = '<%=message%>'
+	var returnUrl = '<%=url%>'
 	alert(message);
 	document.location.href = returnUrl;
 </script>
+<%
+%>
 </body>
 </html>

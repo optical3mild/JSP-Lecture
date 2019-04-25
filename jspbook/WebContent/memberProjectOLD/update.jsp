@@ -1,9 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-
-<!-- jstl core라이브러리 -->
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-
+    pageEncoding="UTF-8" import="member.*"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -23,27 +19,31 @@
 	</style>
 </head>
 <body>
+	<%
+	//request.setCharacterEncoding("UTF-8");
+	MemberDTO member = (MemberDTO) request.getAttribute("member");
+	%>
 	<h3>회원수정</h3>
-	${memberName} 회원님 반갑습니다.<br>
-	<a href="MemberProcServlet?action=getMemList&page=${curMemListPage}">회원목록으로 되돌아가기</a>&nbsp;&nbsp;&nbsp;
-	<a href="MemberProcServlet?action=logout">로그아웃</a>
-	<hr>
-	<c:set var="member" value="${requestScope.member}"/>
-	<form name="registerForm" action=MemberProcServlet?action=execute method=post>
+	<!--
+	<form name="registerForm" action=/jspbook/member/registerProc.jsp method=post> -->
+	<!--
+	<form name="registerForm" action=/jspbook/member/updateMemberServlet?action=execute method=post> -->
+	
+	<form name="registerForm" action=/jspbook/member/MemberProcServlet?action=execute method=post>
 		<!--34:form 내에서 값을 주고 받기위해 필요 -->
-		<input type="hidden" id="id" name="id" value="${member.id}">
+		<input type="hidden" id="id" name="id" value="<%=member.getId()%>">
 		
 		<label><span>아이디:</span>
-			${member.id}
+			<%=member.getId()%>
 		</label>
 		<label><span>이름:</span>
-			<input type="text" name="name" value="${member.name}" size="10">
+			<input type="text" name="name" value="<%=member.getName()%>" size="10">
 		</label>
 		<label><span>생년월일:</span>
-			<input type="text" name="birthday" value="${member.birthday}" size="10">
+			<input type="text" name="birthday" value="<%=member.getBirthday()%>" size="10">
 		</label>
 		<label><span>주소:</span>
-			<input type="text" name="address" value="${member.address}" size="20">
+			<input type="text" name="address" value="<%=member.getAddress()%>" size="20">
 		</label>
 		<label>
 			<span></span>
