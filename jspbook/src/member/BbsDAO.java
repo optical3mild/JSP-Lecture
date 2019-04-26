@@ -58,6 +58,8 @@ public class BbsDAO {
 //		} catch (IOException e) {
 //			e.printStackTrace();
 //		}
+			//확인결과 sb는 넘어감 --> 서블릿에서 문제있음
+			//System.out.println("FileDownloader() : \n" + sb.toString());
 		return sb.toString();
 		
 	}
@@ -86,7 +88,7 @@ public class BbsDAO {
 		}
 	}
 	
-	//selectAll : join으로 member.name을 얻어 새로 정의한 BbsMember 객체의 형태로 반환한다.
+	//BbsMain화면에 보여줄 목록검색 : number는 한페이지당 보여줄 데이터의 수.
 	public List<BbsMember> selectContentsAll(int number) {
 		String query = "select b.id, b.title, m.name, b.date from bbs_table as b "+
 						"join member as m on b.memberId=m.id order by b.date desc limit ?;";

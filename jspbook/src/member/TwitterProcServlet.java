@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.ServletContext;
@@ -50,18 +51,20 @@ public class TwitterProcServlet extends HttpServlet {
 		//session에 저장된 로그인 사용자 이름을 가지고 옴
 //		Object username = session.getAttribute("user");
 		
-		//session에 저장된 로그인 사용자 이름을 가지고 옴
 		//객체생성
+		//session에 저장된 로그인 사용자 이름을 가지고 옴
 		HttpSession session = request.getSession();
+		
 		//세션에 저장된 속성값을 가져옴
 		String username = (String)session.getAttribute("memberName");
+		
 		//ServletContext:
 		//하나의 서블릿이 서블릿 컨테이너와 통신하기 위해서 사용되어지는 메서드들을 가지고 있는 클래스
 		//webApp전역에서 사용가능.
 		ServletContext application = request.getServletContext();
 		
 		//메시지 저장을 위해 application에서 msg로 저장된 ArrayList가지고 옴
-		ArrayList<String> msgs = (ArrayList<String>) application.getAttribute("msgs");
+		List<String> msgs = (ArrayList<String>) application.getAttribute("msgs");
 		
 		//null인 경우 새로운 ArrayList 객체를 생성
 		if(msgs == null) {

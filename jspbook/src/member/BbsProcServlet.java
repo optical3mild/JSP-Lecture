@@ -18,7 +18,6 @@ public class BbsProcServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
     public BbsProcServlet() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -235,10 +234,7 @@ public class BbsProcServlet extends HttpServlet {
 			//DAO의 method 실행.
 			bDao.updateText(bDto, contentMemId);
 			
-//			bDao.close();
-//			response.sendRedirect("BbsProcServlet?action=getList&page=" + curPage);
-//			break;
-			
+			//메세지에 오류가 있는경우, forward나 sendRedirect불가현상 발생.(오류로그 없음)
 			message = "글번호: " + contentId + " 을/를 수정하였습니다.";
 			curPage = (int)session.getAttribute("currentBbsPage");
 			url = "BbsProcServlet?action=getList&page=" + curPage;
@@ -248,6 +244,10 @@ public class BbsProcServlet extends HttpServlet {
 			rd = request.getRequestDispatcher("alertMsg.jsp");
 	        rd.forward(request, response);
 			break;
+			
+//			bDao.close();
+//			response.sendRedirect("BbsProcServlet?action=getList&page=" + curPage);
+//			break;
 			
 //		List<BbsMember> contentsList = null;
 //		case "makeListBy": //작업중. 컬럼 값 별로 검색하는 기능 추가시도

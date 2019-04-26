@@ -25,7 +25,7 @@
 <body>
 	<h3>회원수정</h3>
 	${memberName} 회원님 반갑습니다.<br>
-	<a href="MemberProcServlet?action=getMemList&page=${curMemListPage}">회원목록</a>&nbsp;&nbsp;&nbsp;
+	<a href="MemberProcServlet?action=getMemList&page=${curMemListPage}">회원목록으로 되돌아가기</a>&nbsp;&nbsp;&nbsp;
 	<a href="MemberProcServlet?action=logout">로그아웃</a>
 	<hr>
 	<c:set var="member" value="${requestScope.member}"/>

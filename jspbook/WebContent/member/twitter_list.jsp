@@ -20,8 +20,8 @@
 	<!-- action : 프로젝트 폴더부터 전체 경로 필요 : servlet파일의 경로는 프로젝트 폴더가 빠져있음. -->
 	<form action="TwitterProcServlet" method="post">
 		<!-- 세션에 저장될 이름 출력 -->
-		@${memberName}
-		<input type="text" name="msg">
+		@${memberName}&nbsp;
+		<input type="text" name="msg">&nbsp;&nbsp;
 		<input type="submit" value="Tweet">
 	</form>
 	</div>

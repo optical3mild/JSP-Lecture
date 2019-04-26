@@ -1,6 +1,4 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<!-- 필요한 자바 클래스와 정의한 클래스, 컨트롤러를 import -->
-<%@ page import="java.util.*, member.*" %>
 
 <!-- jstl core라이브러리 -->
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>

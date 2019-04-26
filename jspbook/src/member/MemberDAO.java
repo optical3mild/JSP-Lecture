@@ -12,6 +12,7 @@ import java.util.List;
 
 // WEB-INF/lib/에 파일 추가
 import org.mindrot.jbcrypt.BCrypt;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,7 +76,7 @@ public class MemberDAO {
 	}
 	
 	//페이지 카운터 관련-----------------------------------------------------------
-	public int getCount() {
+	public int getCount() {	//DB로 부터 데이터의 갯수를 받아온다.
 		String query = "select count(*) from member;";
 		PreparedStatement pStmt = null;
 		int count = 0;

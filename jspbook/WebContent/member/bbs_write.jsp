@@ -1,6 +1,4 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<!-- 필요한 자바 클래스와 정의한 클래스, 컨트롤러를 import -->
-<%@ page import="java.util.*, member.*" %>
 
 <!-- jstl core라이브러리 -->
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -19,7 +17,7 @@
 	<a href="MemberProcServlet?action=logout">로그아웃</a>
 	<hr>
 	<br>
-	<form name="registerForm" action=/jspbook/member/BbsProcServlet?action=write method=post>
+	<form name="registerForm" action="BbsProcServlet?action=write" method=post>
 		<label><span>제목:</span>
 			<input type="text" name="title" size="50">
 		</label><br><br>
