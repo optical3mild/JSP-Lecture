@@ -1,5 +1,7 @@
 package member;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -8,8 +10,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class BbsDAO {
+	private static final Logger LOG = LoggerFactory.getLogger(BbsDAO.class);
+
 	private Connection conn;
 	private static final String USERNAME = "javauser";
 	private static final String PASSWORD = "javapass";
@@ -26,6 +33,33 @@ public class BbsDAO {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+	}
+	
+	//목록 다운로더
+	public String prepareDownload(String fileName) {
+		LOG.trace("");
+		StringBuffer sb = new StringBuffer();
+		List<BbsMember> bmList = selectJoinAll(0);
+		
+//		try {
+//			FileWriter fw = new FileWriter("c:/tmp/"+fileName+".csv");
+			String head = "글번호,제목,작성자,최종수정시각\r\n";
+			sb.append(head);
+//			fw.write(head);
+			LOG.debug(head);
+			for(BbsMember bMem : bmList) {
+				String line = bMem.getId() + "," +bMem.getTitle() + "," +bMem.getName() + "," +bMem.getDate() +"\r\n";
+				sb.append(line);
+//				fw.write(line);
+				LOG.debug(line);
+			}
+//			fw.flush();
+//			fw.close();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+		return sb.toString();
+		
 	}
 	
 	//Insert

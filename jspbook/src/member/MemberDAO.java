@@ -1,5 +1,7 @@
 package member;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -10,8 +12,12 @@ import java.util.List;
 
 // WEB-INF/lib/에 파일 추가
 import org.mindrot.jbcrypt.BCrypt;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MemberDAO {
+	private static final Logger LOG = LoggerFactory.getLogger(MemberDAO.class);
+
 	public static final int ID_PASSWORD_MATCH = 1;
 	public static final int ID_DOES_NOT_EXIST = 2;
 	public static final int PASSWORD_IS_WRONG = 3;
@@ -38,6 +44,34 @@ public class MemberDAO {
 		} catch (Exception ex) { //ClassNotFoundException, SQLException
 			ex.printStackTrace();
 		}
+	}
+	
+	//목록 다운로더
+	public String prepareDownload(String fileName) {
+		LOG.trace("");
+		StringBuffer sb = new StringBuffer();
+		List<MemberDTO> mList = makeMemList(0);
+		
+		try {
+			FileWriter fw = new FileWriter("c:/tmp/"+fileName+".csv");
+			
+			String head = "아이디,이름,생년월일,주소\r\n";
+			sb.append(head);
+			fw.write(head);
+			LOG.debug(head);
+			for(MemberDTO mDto : mList) {
+				String line = mDto.getId() + "," +mDto.getName() + "," +mDto.getBirthday() + "," +mDto.getAddress() +"\r\n";
+				sb.append(line);
+				fw.write(line);
+				LOG.debug(line);
+			}
+			fw.flush();
+			fw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return sb.toString();
+		
 	}
 	
 	//페이지 카운터 관련-----------------------------------------------------------
@@ -106,7 +140,7 @@ public class MemberDAO {
 	
 	//password확인 : plain --> hashed password
 	public int verifyIdPassword(int id, String password) {
-		System.out.println("verifyIdPassword(): " +id + ", " +password);
+//		System.out.println("verifyIdPassword(): " +id + ", " +password);
 		String query = "select hashed from member where id=?"; //[5]DB에서 검색하는 쿼리문
 		
 		PreparedStatement pStmt = null;

@@ -21,11 +21,12 @@
 	<a href="BbsProcServlet?action=getList&page=1">게시판</a>&nbsp;&nbsp;&nbsp;
 	<!-- 트위터 목록 Link -->
 	<a href="twitter_list.jsp">트윗</a>&nbsp;&nbsp;&nbsp;
+	<a href="FileProcServlet?action=MemberList&fileName=MEMBERLIST">다운로드</a>&nbsp;&nbsp;
 	<a href="MemberProcServlet?action=logout">로그아웃</a>
 	<hr>
 	<table border="1" style="border-collapse:collapse;">
 		<tr><th>아이디</th><th>이름</th><th>생일</th><th>주소</th><th>액션</th></tr>
-		<c:set var="memberList" value="${requestScope.memberList}"/>
+	<!-- 	<c:set var="memberList" value="${requestScope.memberList}"/>  -->
 		
 		<c:forEach var="member" items="${requestScope.memberList}">
 			<tr>

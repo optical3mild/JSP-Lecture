@@ -108,6 +108,14 @@ public class MemberProcServlet extends HttpServlet {
 			member = mDao.selectMemberById(id);
 			mDao.close();
 			request.setAttribute("member", member);
+			
+			message = "아래와 같이 수정되었습니다."+ member.toString();
+			curMemListPage = (int)session.getAttribute("curMemListPage");
+			url = "MemberProcServlet?action=getMemList&page=" + curMemListPage;
+			
+			request.setAttribute("message", message);
+			request.setAttribute("url", url);
+			
 			rd = request.getRequestDispatcher("update.jsp");
 	        rd.forward(request, response);
 	        break;
@@ -200,7 +208,7 @@ public class MemberProcServlet extends HttpServlet {
 			session.setAttribute("memberName", name);
 			
 			message = "귀하의 아이디는 " + member.getId() + " 입니다.";
-			url = "loginMain.jsp";
+			url = "login.jsp";
 			request.setAttribute("message", message);
 			request.setAttribute("url", url);
 			rd = request.getRequestDispatcher("alertMsg.jsp");
@@ -217,15 +225,17 @@ public class MemberProcServlet extends HttpServlet {
 			address = request.getParameter("address");
 			
 			member = new MemberDTO(id, "*", name, birthday, address);
-			System.out.println(member.toString());
 			
 			mDao = new MemberDAO();
 			mDao.updateMember(member);
 			mDao.close();
 			
-			message = "다음과 같이 수정하였습니다.\\n" + member.toString();
+			curMemListPage = (int)session.getAttribute("curMemListPage");
+			url = "MemberProcServlet?action=getMemList&page=" + curMemListPage;
+			
+			message = "회원정보를 수정하였습니다.";
 			request.setAttribute("message", message);
-			request.setAttribute("url", "loginMain.jsp");
+			request.setAttribute("url", url);
 			rd = request.getRequestDispatcher("alertMsg.jsp");
 	        rd.forward(request, response);
 			//response.sendRedirect("loginMain.jsp");

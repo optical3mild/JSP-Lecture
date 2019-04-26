@@ -17,18 +17,19 @@
 	<!-- scriptlet에서 jstl-EL로 변경: session에 설정된 attribute를 호출/출력-->
 	${memberName} 회원님 반갑습니다.<br>
 	<a href="bbs_write.jsp">글쓰기</a>&nbsp;&nbsp;&nbsp;
-	<a href="MemberProcServlet?action=getMemList&page=1">메인화면</a>&nbsp;&nbsp;&nbsp;
+	<a href="FileProcServlet?action=bbsList&fileName=BBSLIST">다운로드</a>&nbsp;&nbsp;
+	<a href="MemberProcServlet?action=getMemList&page=1">회원목록</a>&nbsp;&nbsp;&nbsp;
 	<a href="twitter_list.jsp">트윗</a>&nbsp;&nbsp;&nbsp;
 	<a href="MemberProcServlet?action=logout">로그아웃</a>
 	<hr>
 	<table border="1" style="border-collapse:collapse;">
-		<tr bgcolor="skyblue"><th height="30">글번호</th><th>제목</th><th>작성자</th><th>최종날짜</th><th>액션</th></tr>
+		<tr bgcolor="skyblue"><th height="30">글번호</th><th>제목</th><th>작성자</th><th>최종수정시각</th><th>액션</th></tr>
 		
 		<!-- request.getAtt -> jstl_core형식으로 변경 -->
-		<c:set var="bmList" value="${requestScope.bbsMemberList}" />
+		<!-- <c:set var="bmList" value="${requestScope.bbsMemberList}" /> -->
 		
 		<!-- for (BbsMember bm: bmList){}와 동일 -->
-		<c:forEach var="bm" items="${bmList}">
+		<c:forEach var="bm" items="${requestScope.bbsMemberList}">
 			<tr>
 				<!-- 중복부분 처리필요. -->
 				<td onclick="location.href='BbsProcServlet?action=contentView&contentId=${bm.id}'">${bm.id}</td>

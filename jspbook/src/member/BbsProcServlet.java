@@ -97,6 +97,7 @@ public class BbsProcServlet extends HttpServlet {
 			pageList.add(page);
 			
 			List<BbsMember> bmList = bDao.selectJoinAll(curPage);
+			
 			request.setAttribute("bbsMemberList", bmList);
 			request.setAttribute("pageList", pageList);
 			rd = request.getRequestDispatcher("bbs_list.jsp");
@@ -114,30 +115,6 @@ public class BbsProcServlet extends HttpServlet {
 			rd.forward(request, response);
 			break;
 		
-		case "update":		// 수정 버튼 클릭 시
-			bDao = new BbsDAO();
-			//해당 글의 id로 memberId확인
-			contentId = Integer.parseInt(request.getParameter("contentId"));
-			contentMemId = bDao.selectContentById(contentId).getMemberId();
-			if (contentMemId != (Integer)session.getAttribute("memberId")) {
-				message = "id = " + contentId + " 에 대한 수정 권한이 없습니다.";
-				rd = request.getRequestDispatcher("alertMsg.jsp");
-				request.setAttribute("message", message);
-				
-				curPage = (int)session.getAttribute("currentBbsPage");
-				url = "BbsProcServlet?action=getList&page=" + curPage;
-				
-				request.setAttribute("url",url);
-				
-				rd.forward(request, response);
-				break;
-			}
-			bMem = bDao.detailsearch(contentId);
-			bMem.setContent(br2Lf(bMem.getContent()));
-			request.setAttribute("selectedContent", bMem);
-			rd = request.getRequestDispatcher("bbs_con_modi.jsp");
-			rd.forward(request, response);
-			break;
 			
 		case "delete":		// 삭제 버튼 클릭 시
 			bDao = new BbsDAO();
@@ -159,7 +136,7 @@ public class BbsProcServlet extends HttpServlet {
 				rd.forward(request, response);
 				break;
 			}
-			message = "글번호 " +contentId + "가 삭제되었습니다.";
+			message = "글번호 : " +contentId + " 가 삭제되었습니다.";
 			bDao.deleteText(contentId);
 			bDao.close();
 			
@@ -197,6 +174,31 @@ public class BbsProcServlet extends HttpServlet {
 	        rd.forward(request, response);
 			break;
 			
+		case "update":		// 수정 버튼 클릭 시
+			bDao = new BbsDAO();
+			//해당 글의 id로 memberId확인
+			contentId = Integer.parseInt(request.getParameter("contentId"));
+			contentMemId = bDao.selectContentById(contentId).getMemberId();
+			if (contentMemId != (Integer)session.getAttribute("memberId")) {
+				message = "글번호: " + contentId + " 에 대한 수정 권한이 없습니다.";
+				
+				rd = request.getRequestDispatcher("alertMsg.jsp");
+				request.setAttribute("message", message);
+				
+				curPage = (int)session.getAttribute("currentBbsPage");
+				url = "BbsProcServlet?action=getList&page=" + curPage;
+				
+				request.setAttribute("url",url);
+				
+				rd.forward(request, response);
+				break;
+			}
+			bMem = bDao.detailsearch(contentId);
+			bMem.setContent(br2Lf(bMem.getContent()));
+			request.setAttribute("selectedContent", bMem);
+			rd = request.getRequestDispatcher("bbs_con_modi.jsp");
+			rd.forward(request, response);
+			break;
 			
 		case "execute":			// 게시글 수정후 저장
 			//memberId검사 재실행 필요?
@@ -209,13 +211,12 @@ public class BbsProcServlet extends HttpServlet {
 			contentId = Integer.parseInt(request.getParameter("contentId"));
 			contentMemId = bDao.selectContentById(contentId).getMemberId();
 			if (contentMemId != (Integer)session.getAttribute("memberId")) {
-				message = "id = " + contentId + " 에 대한 수정 권한이 없습니다.";
+				message = "글번호: " + contentId + " 에 대한 수정 권한이 없습니다.";
 				request.setAttribute("message", message);
 				
 //				url = "BbsProcServlet?action=contentView&contentId="+contentId;
 				curPage = (int)session.getAttribute("currentBbsPage");
 				url = "BbsProcServlet?action=getList&page=" + curPage;
-				System.out.println(url);
 				request.setAttribute("url",url);
 				
 				rd = request.getRequestDispatcher("alertMsg.jsp");
@@ -238,7 +239,7 @@ public class BbsProcServlet extends HttpServlet {
 //			response.sendRedirect("BbsProcServlet?action=getList&page=" + curPage);
 //			break;
 			
-			message = "다음과 같이 수정하였습니다.\\n" + bDto.toString();
+			message = "글번호: " + contentId + " 을/를 수정하였습니다.";
 			curPage = (int)session.getAttribute("currentBbsPage");
 			url = "BbsProcServlet?action=getList&page=" + curPage;
 			bDao.close();
