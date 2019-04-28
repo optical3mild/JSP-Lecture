@@ -64,6 +64,73 @@ public class BbsDAO {
 		
 	}
 	
+	//페이지 카운터 관련-----------------------------------------------------------
+	public int getCount() {
+		String query = "select count(*) from bbs_table;";
+		PreparedStatement pStmt = null;
+		int count = 0;
+		try {
+			pStmt = conn.prepareStatement(query);
+			ResultSet rs = pStmt.executeQuery();
+			while (rs.next()) {				
+				count = rs.getInt(1);
+			}
+			rs.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (pStmt != null && !pStmt.isClosed()) 
+					pStmt.close();
+			} catch (SQLException se) {
+				se.printStackTrace();
+			}
+		}
+		return count;
+	}
+	
+	public List<BbsMember> selectJoinAll(int page) {
+		int offset = 0;
+		String query = null;
+		if (page == 0) {	// page가 0이면 모든 데이터를 보냄
+			query = "select b.id, b.title, m.name, b.date from bbs_table as b " + 
+					"inner join member as m on b.memberId=m.id order by b.id desc;";
+		} else {			// page가 0이 아니면 해당 페이지 데이터만 보냄
+			query = "select b.id, b.title, m.name, b.date from bbs_table as b " + 
+					"inner join member as m on b.memberId=m.id order by b.id desc limit ?, 10;";
+			offset = (page - 1) * 10;
+		}
+		PreparedStatement pStmt = null;
+		List<BbsMember> bmList = new ArrayList<BbsMember>();
+		try {
+			pStmt = conn.prepareStatement(query);
+			if (page != 0)
+				pStmt.setInt(1, offset);
+			ResultSet rs = pStmt.executeQuery();
+			while (rs.next()) {	
+				BbsMember bmDto = new BbsMember();
+				bmDto.setId(rs.getInt(1));
+				bmDto.setTitle(rs.getString(2));
+				bmDto.setName(rs.getString(3));
+				bmDto.setDate(rs.getString(4));
+				bmList.add(bmDto);
+			}
+			rs.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (pStmt != null && !pStmt.isClosed()) 
+					pStmt.close();
+			} catch (SQLException se) {
+				se.printStackTrace();
+			}
+		}
+		return bmList;
+	}
+	//------------------------------------------------------------------------------------------------
+		
+	
 	//Insert
 	public void insertText(BbsDTO insText) {
 		String query = "insert into bbs_table(memberId, title, content) values(?,?,?);";
@@ -234,71 +301,6 @@ public class BbsDAO {
 		return bmDto;
 	}
 	
-	//페이지 카운터 관련-----------------------------------------------------------
-	public int getCount() {
-		String query = "select count(*) from bbs_table;";
-		PreparedStatement pStmt = null;
-		int count = 0;
-		try {
-			pStmt = conn.prepareStatement(query);
-			ResultSet rs = pStmt.executeQuery();
-			while (rs.next()) {				
-				count = rs.getInt(1);
-			}
-			rs.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (pStmt != null && !pStmt.isClosed()) 
-					pStmt.close();
-			} catch (SQLException se) {
-				se.printStackTrace();
-			}
-		}
-		return count;
-	}
-	
-	public List<BbsMember> selectJoinAll(int page) {
-		int offset = 0;
-		String query = null;
-		if (page == 0) {	// page가 0이면 모든 데이터를 보냄
-			query = "select b.id, b.title, m.name, b.date from bbs_table as b " + 
-					"inner join member as m on b.memberId=m.id order by b.id desc;";
-		} else {			// page가 0이 아니면 해당 페이지 데이터만 보냄
-			query = "select b.id, b.title, m.name, b.date from bbs_table as b " + 
-					"inner join member as m on b.memberId=m.id order by b.id desc limit ?, 10;";
-			offset = (page - 1) * 10;
-		}
-		PreparedStatement pStmt = null;
-		List<BbsMember> bmList = new ArrayList<BbsMember>();
-		try {
-			pStmt = conn.prepareStatement(query);
-			if (page != 0)
-				pStmt.setInt(1, offset);
-			ResultSet rs = pStmt.executeQuery();
-			while (rs.next()) {	
-				BbsMember bmDto = new BbsMember();
-				bmDto.setId(rs.getInt(1));
-				bmDto.setTitle(rs.getString(2));
-				bmDto.setName(rs.getString(3));
-				bmDto.setDate(rs.getString(4));
-				bmList.add(bmDto);
-			}
-			rs.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (pStmt != null && !pStmt.isClosed()) 
-					pStmt.close();
-			} catch (SQLException se) {
-				se.printStackTrace();
-			}
-		}
-		return bmList;
-	}
-	//------------------------------------------------------------------------------------------------
 	
 	//select * from bbs_table where id --> join으로 memberId로 연동하여 하나를 선택, 다른메소드에 전달.
 	public BbsDTO selectContentById(int id) {
